@@ -20,3 +20,8 @@ Then:
 - Controls are at least 44 px tall (comfortable for a finger).
 - Canvas drawing uses `fitCanvas()` so it stays sharp on Retina screens.
 - A short explanation section under the demo, plus a link to the Python reference.
+- A `.source` box at the end linking the matching chapter of the
+  [Yandex ML handbook](https://contest.yandex.ru/tracks/ml/). Explain in our own words;
+  never copy text from the handbook.
+- Shared helpers in `assets/common.js` (`plot2d`, `drawGrid`, `drawPoint`, `hitPoint`,
+  `segmented`, `rng`, ...) cover most 2D demos; reuse them before writing new ones.

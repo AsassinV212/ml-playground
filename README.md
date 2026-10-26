@@ -8,14 +8,20 @@ plus a short, readable Python reference implementation.
 
 ## Topics
 
-| Topic | Page | Python reference |
-|---|---|---|
-| Gradient descent | [topics/gradient-descent.html](topics/gradient-descent.html) | [python/gradient_descent.py](python/gradient_descent.py) |
-| Linear regression | coming soon | |
-| Logistic regression | coming soon | |
-| Overfitting | coming soon | |
-| k-nearest neighbors | coming soon | |
-| Decision tree | coming soon | |
+Topics follow the [Yandex ML handbook](https://contest.yandex.ru/tracks/ml/) (in Russian);
+each page links to the matching chapter for the full theory. The explanations on the
+pages are our own.
+
+| # | Topic | Page | Python reference | Handbook |
+|---|---|---|---|---|
+| 1 | Gradient descent | [page](topics/gradient-descent.html) | [gradient_descent.py](python/gradient_descent.py) | §2.2, ch. 14 |
+| 2 | Linear regression | [page](topics/linear-regression.html) | [linear_regression.py](python/linear_regression.py) | §2.2 |
+| 3 | Logistic regression | [page](topics/logistic-regression.html) | [logistic_regression.py](python/logistic_regression.py) | §2.2 |
+| 4 | k-nearest neighbors | [page](topics/knn.html) | [knn.py](python/knn.py) | §2.3 |
+| 5 | Decision tree | [page](topics/decision-tree.html) | [decision_tree.py](python/decision_tree.py) | §2.4 |
+| 6 | Overfitting | [page](topics/overfitting.html) | [overfitting.py](python/overfitting.py) | §3.3, §12.1 |
+
+Coming soon: ensembles and gradient boosting, classification metrics, a tiny neural network.
 
 ## Run the site locally
 
