@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Overfitting · ml-playground</title>
+  <meta name="description" content="Fit polynomials of growing degree to noisy data and watch training and test error part ways.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="back" href="../index.html">← All topics</a>
+      <h1>Overfitting</h1>
+      <p class="lead">A model that is too flexible learns the noise instead of the pattern. It looks perfect on training data and fails on new data.</p>
+    </header>
+
+    <main>
+      <section class="demo">
+        <div class="panel">
+          <canvas id="plot" class="plot square" aria-label="Noisy training points, the true curve and the fitted polynomial"></canvas>
+          <div class="legend">
+            <span><i style="background:#5fd4b0"></i>fitted polynomial</span>
+            <span><i style="background:rgba(255,255,255,0.55)"></i>true curve</span>
+            <span><i style="background:#ff7a59"></i>average of 20 fits</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <label for="degree">Polynomial degree <output id="degree-out" for="degree"></output></label>
+            <input id="degree" type="range" min="0" max="15" step="1" value="3">
+          </div>
+
+          <div class="field">
+            <label for="n-train">Training points <output id="n-out" for="n-train"></output></label>
+            <input id="n-train" type="range" min="6" max="60" step="1" value="15">
+          </div>
+
+          <div class="field">
+            <label for="l2">L2 regularization <output id="l2-out" for="l2"></output></label>
+            <input id="l2" type="range" min="-7" max="0" step="0.5" value="-7">
+          </div>
+
+          <div class="buttons two">
+            <button id="resample" type="button" class="primary">New sample</button>
+          </div>
+          <label class="check"><input id="show-test" type="checkbox"> Show test points</label>
+          <label class="check"><input id="show-cloud" type="checkbox"> Show 20 fits on other samples</label>
+
+          <div class="stats">
+            <div class="stat"><div class="k">train MSE</div><div class="v" id="stat-train">–</div></div>
+            <div class="stat"><div class="k">test MSE</div><div class="v" id="stat-test">–</div></div>
+            <div class="stat"><div class="k">coefficients / points</div><div class="v" id="stat-params">–</div></div>
+            <div class="stat"><div class="k">|w|</div><div class="v" id="stat-w">–</div></div>
+          </div>
+
+          <canvas id="error-chart" class="plot" style="height:180px" aria-label="Train and test error for every degree"></canvas>
+          <div class="legend">
+            <span><i style="background:#5fd4b0"></i>train MSE</span>
+            <span><i style="background:#ff7a59"></i>test MSE</span>
+            <span><i style="background:rgba(255,255,255,0.3)"></i>noise level</span>
+            <span>x: degree, y: log scale</span>
+          </div>
+        </div>
+      </section>
+
+      <article class="prose">
+        <h2>The setup</h2>
+        <p>
+          The hidden truth is the curve <code>y = sin(2πx)</code>. We only see a few measurements of it, each with
+          random noise. We fit a polynomial of degree <code>d</code> by least squares, the same as linear
+          regression but with features <code>1, x, x², …, xᵈ</code>. Then we check it twice:
+        </p>
+        <ul>
+          <li><strong>train error</strong>: on the points it was fitted to;</li>
+          <li><strong>test error</strong>: on 200 fresh points from the same source that it never saw.</li>
+        </ul>
+
+        <h2>What the chart shows</h2>
+        <p>
+          Train error only goes down as the degree grows: a bigger family of curves can always fit at least as
+          well. Test error makes a <strong>U</strong>. At first it falls (the model learns the shape), then it shoots
+          up (the model learns the noise). When the number of coefficients reaches the number of points, the curve can
+          pass through every point exactly. Train error drops to almost zero, and the curve between the points goes wild.
+        </p>
+        <p>
+          The dotted line is the noise level. Even the true curve has this test error, because noise cannot be predicted.
+          A train error <em>below</em> that line is a warning sign: the model has memorized random noise.
+        </p>
+
+        <h2>A physics picture: systematic and random error</h2>
+        <p>
+          Test error splits into two parts that every experimentalist knows:
+        </p>
+        <ul>
+          <li>
+            <strong>Bias</strong> is <em>systematic error</em>. A straight line cannot bend into a sine wave, no
+            matter how much data you give it. Every repetition of the experiment misses in the same way.
+          </li>
+          <li>
+            <strong>Variance</strong> is <em>random error</em>. A degree-15 polynomial fits each new sample
+            perfectly, but every sample gives a different crazy curve. The answer depends on the noise you happened
+            to get.
+          </li>
+        </ul>
+        <p>
+          Turn on <strong>Show 20 fits</strong>. Each thin line is the same model trained on another random sample. The
+          spread of the lines is the variance; the gap between their average (dashed) and the true curve is the bias.
+          Low degree: tight bundle, wrong shape. High degree: right shape on average, huge spread. The best degree
+          balances the two.
+        </p>
+
+        <h2>Three cures</h2>
+        <ul>
+          <li><strong>A simpler model</strong>: lower the degree.</li>
+          <li><strong>More data</strong>: drag "training points" to 60. The same degree now overfits much less, because
+            noise averages out over more measurements.</li>
+          <li><strong>Regularization</strong>: the L2 term <code>λ·|w|²</code> punishes huge coefficients. Watch
+            <code>|w|</code>: an overfitted curve needs enormous coefficients that nearly cancel each other out, and the
+            penalty forbids that.</li>
+        </ul>
+
+        <h2>Try this</h2>
+        <ul>
+          <li>Set degree 14 and press <strong>New sample</strong> a few times.</li>
+          <li>Degree 14, then raise L2 step by step. Find the value where test error is lowest.</li>
+          <li>Degree 1 with "Show 20 fits": a tight bundle, all wrong in the same way.</li>
+        </ul>
+
+        <h2>Reference code</h2>
+        <p>
+          Python with numpy: <a href="../python/overfitting.py">python/overfitting.py</a>.
+        </p>
+
+        <p class="source">
+          Go deeper in the Yandex ML handbook (in Russian):
+          <a href="https://contest.yandex.ru/tracks/ml/model-evaluation/cross-validation" target="_blank" rel="noopener">§3.3 Cross-validation</a>
+          (how to get an honest test error from limited data) and
+          <a href="https://contest.yandex.ru/tracks/ml/machine-learning-theory/bias-variance-decomposition" target="_blank" rel="noopener">§12.1 Bias-variance decomposition</a>
+          (the math behind the two kinds of error).
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+  </div>
+
+  <script src="../assets/common.js"></script>
+  <script src="overfitting.js"></script>
+</body>
+</html>
