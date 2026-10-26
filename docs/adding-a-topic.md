@@ -23,5 +23,9 @@ Then:
 - A `.source` box at the end linking the matching chapter of the
   [Yandex ML handbook](https://contest.yandex.ru/tracks/ml/). Explain in our own words;
   never copy text from the handbook.
+- Asset links carry a version, e.g. `common.js?v=2`. GitHub Pages lets browsers cache
+  files for 10 minutes, so after changing `assets/common.js` or `assets/style.css`
+  bump the version in **every** page; otherwise phones keep the old helpers and the
+  new pages break.
 - Shared helpers in `assets/common.js` (`plot2d`, `drawGrid`, `drawPoint`, `hitPoint`,
   `segmented`, `rng`, ...) cover most 2D demos; reuse them before writing new ones.
