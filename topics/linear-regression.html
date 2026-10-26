@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Linear Regression · ml-playground</title>
+  <meta name="description" content="Fit a line to points with least squares or gradient descent, and see how outliers pull on it.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="back" href="../index.html">← All topics</a>
+      <h1>Linear regression</h1>
+      <p class="lead">Find the line that misses the points the least. Tap to add or remove points, then fit.</p>
+    </header>
+
+    <main>
+      <section class="demo">
+        <div class="panel">
+          <canvas id="plot" class="plot square" aria-label="Data points and the fitted line"></canvas>
+          <p class="hint">Tap empty space to add a point, tap a point to remove it.</p>
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <label for="loss">Loss</label>
+            <select id="loss">
+              <option value="mse">MSE: mean squared error</option>
+              <option value="mae">MAE: mean absolute error</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="lr">Learning rate <output id="lr-out" for="lr"></output></label>
+            <input id="lr" type="range" min="-3" max="0.2" step="0.01">
+          </div>
+
+          <div class="buttons">
+            <button id="run" type="button" class="primary">Run</button>
+            <button id="exact" type="button">Exact</button>
+            <button id="reset" type="button">Reset line</button>
+          </div>
+          <div class="buttons">
+            <button id="random" type="button">New data</button>
+            <button id="outlier" type="button">Outlier</button>
+            <button id="clear" type="button">Clear</button>
+          </div>
+
+          <label class="check"><input id="show-errors" type="checkbox" checked> Show errors</label>
+
+          <div class="stats">
+            <div class="stat"><div class="k">slope</div><div class="v" id="stat-slope">–</div></div>
+            <div class="stat"><div class="k">intercept</div><div class="v" id="stat-intercept">–</div></div>
+            <div class="stat"><div class="k" id="stat-loss-k">loss</div><div class="v" id="stat-loss">–</div></div>
+            <div class="stat"><div class="k">step</div><div class="v" id="stat-step">0</div></div>
+          </div>
+
+          <p id="status" class="status" role="status"></p>
+          <canvas id="loss-chart" class="plot chart" aria-label="Loss at each step"></canvas>
+        </div>
+      </section>
+
+      <article class="prose">
+        <h2>The model</h2>
+        <p>
+          Linear regression predicts a number with a straight line:
+        </p>
+        <p class="formula">ŷ = w · x + b</p>
+        <p>
+          <code>w</code> is the slope and <code>b</code> the intercept. With many features it becomes
+          <code>ŷ = w₁x₁ + w₂x₂ + … + b</code>, but the idea is the same. Training means choosing
+          <code>w</code> and <code>b</code> so that the predictions miss the data as little as possible.
+        </p>
+
+        <h2>How do we measure "miss"?</h2>
+        <p>
+          For each point the <em>residual</em> is <code>r = ŷ − y</code>, the vertical gap between the
+          point and the line. A loss turns all the residuals into one number:
+        </p>
+        <ul>
+          <li><strong>MSE</strong> = average of <code>r²</code>. On the plot each squared error is a real square.</li>
+          <li><strong>MAE</strong> = average of <code>|r|</code>. On the plot each error is a vertical segment.</li>
+        </ul>
+
+        <h2>A physics picture: springs</h2>
+        <p>
+          Attach every point to the line with a vertical spring. A spring stretched by <code>r</code> stores
+          energy <code>½kr²</code>, so the total energy is proportional to MSE. Let the line go and it settles
+          where the energy is lowest: that is the least-squares fit.
+        </p>
+        <p>
+          The pull of a spring grows with its stretch. A far-away <em>outlier</em> stretches its spring a lot
+          and drags the whole line towards itself. With MAE every point pulls with the same force no matter
+          how far it is, like a weight hanging on a string over a pulley. One distant point is then just one
+          vote, and the line stays with the majority. Press <strong>Outlier</strong> and compare.
+        </p>
+
+        <h2>Two ways to find the minimum</h2>
+        <ul>
+          <li>
+            <strong>Exact.</strong> For MSE the minimum has a formula:
+            <code>w = cov(x, y) / var(x)</code>, and the line passes through the average point.
+            With many features this is the normal equation <code>w = (XᵀX)⁻¹Xᵀy</code>.
+          </li>
+          <li>
+            <strong>Gradient descent.</strong> Start with a flat line and roll downhill on the loss,
+            exactly like on the <a href="gradient-descent.html">gradient descent</a> page.
+            This works for any loss, including MAE, and for millions of features where inverting
+            <code>XᵀX</code> is too slow.
+          </li>
+        </ul>
+        <p>
+          MAE has a catch: its slope near the minimum is not small, it stays ±1. A fixed step would make the
+          line jitter forever, so for MAE the step shrinks over time.
+        </p>
+
+        <h2>Try this</h2>
+        <ul>
+          <li>Press <strong>Exact</strong>, then <strong>Reset line</strong> and <strong>Run</strong>: gradient descent arrives at the same line.</li>
+          <li>Add two outliers. Fit with MSE, then switch to MAE and run again.</li>
+          <li>Raise the learning rate until MSE descent diverges.</li>
+        </ul>
+
+        <h2>Reference code</h2>
+        <p>
+          Python with numpy: <a href="../python/linear_regression.py">python/linear_regression.py</a>.
+        </p>
+
+        <p class="source">
+          Go deeper: <a href="https://contest.yandex.ru/tracks/ml/supervised-learning/linear-models" target="_blank" rel="noopener">§2.2 Linear models</a>
+          in the Yandex ML handbook (in Russian): least squares, regularization, other losses.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+  </div>
+
+  <script src="../assets/common.js"></script>
+  <script src="linear-regression.js"></script>
+</body>
+</html>

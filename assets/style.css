@@ -165,6 +165,46 @@ input[type="range"] {
   background: transparent;
 }
 
+.buttons + .buttons { margin-top: 8px; }
+.buttons.two { grid-template-columns: repeat(2, 1fr); }
+button:disabled { opacity: 0.4; cursor: default; }
+
+/* Segmented control: one pressed button out of several */
+.segmented { display: flex; gap: 6px; }
+.segmented button { flex: 1; padding: 0 6px; }
+.segmented button[aria-pressed="true"] { border-color: var(--text); background: var(--border); }
+.swatch {
+  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+  margin-right: 6px; vertical-align: 0;
+}
+
+.check { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; }
+.check input { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; }
+
+.tree {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 12px 0 0;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre;
+}
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); margin: 8px 2px 0; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+
+.source {
+  margin-top: 28px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 8px 8px 0;
+}
+
 /* Readouts */
 
 .stats {

@@ -97,5 +97,121 @@
     ctx.stroke();
   }
 
-  window.ML = { fitCanvas, colormap, fmt, drawLineChart };
+  // Read a CSS custom property, e.g. cssVar("--accent").
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  // Colors for class labels 0, 1, 2 (coral, blue, yellow).
+  const CLASS_COLORS = ["#ff7a59", "#5fb4ff", "#ffd166"];
+  const CLASS_RGB = [[255, 122, 89], [95, 180, 255], [255, 209, 102]];
+
+  // Seeded random numbers (mulberry32), so "random data" is reproducible.
+  function rng(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // Standard normal sample (Box-Muller) from a uniform generator.
+  function randn(rand) {
+    const u = 1 - rand(), v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  // A 2D plot: maps the world box [x0, x1] x [y0, y1] onto a fitted canvas.
+  function plot2d(canvas, box) {
+    const v = fitCanvas(canvas);
+    const [x0, x1, y0, y1] = box;
+    v.box = box;
+    v.sx = (x) => ((x - x0) / (x1 - x0)) * v.w;
+    v.sy = (y) => (1 - (y - y0) / (y1 - y0)) * v.h;
+    v.wx = (sx) => x0 + (sx / v.w) * (x1 - x0);
+    v.wy = (sy) => y0 + (1 - sy / v.h) * (y1 - y0);
+    return v;
+  }
+
+  // Faint grid every `step` world units, with tick labels if `labels` is true.
+  function drawGrid(v, step, labels) {
+    const { ctx, w, h } = v;
+    const [x0, x1, y0, y1] = v.box;
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.07)";
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.font = "10px " + cssVar("--mono");
+    for (let x = Math.ceil(x0 / step) * step; x <= x1 + 1e-9; x += step) {
+      const sx = Math.round(v.sx(x)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, h); ctx.stroke();
+      if (labels && x > x0 + 1e-9 && x < x1 - 1e-9) ctx.fillText(+x.toFixed(2), sx + 2, h - 3);
+    }
+    for (let y = Math.ceil(y0 / step) * step; y <= y1 + 1e-9; y += step) {
+      const sy = Math.round(v.sy(y)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(w, sy); ctx.stroke();
+      if (labels && y > y0 + 1e-9 && y < y1 - 1e-9) ctx.fillText(+y.toFixed(2), 3, sy - 3);
+    }
+    ctx.restore();
+  }
+
+  // A data point: filled circle with a dark outline so it reads on any background.
+  function drawPoint(ctx, sx, sy, color, r) {
+    ctx.beginPath();
+    ctx.arc(sx, sy, r || 5, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "rgba(0,0,0,0.6)";
+    ctx.stroke();
+  }
+
+  // Index of the point within `radius` CSS px of (sx, sy), or -1.
+  function hitPoint(points, v, sx, sy, radius) {
+    let best = -1, bestD = (radius || 14) ** 2;
+    points.forEach((p, i) => {
+      const d = (v.sx(p.x) - sx) ** 2 + (v.sy(p.y) - sy) ** 2;
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
+  }
+
+  // Pointer position relative to the element, in CSS px.
+  function pointerPos(el, e) {
+    const r = el.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  }
+
+  // Call `cb` when the element's width really changes. iOS fires "resize"
+  // whenever the toolbar hides on scroll, which would redraw for nothing.
+  function onWidthChange(el, cb) {
+    let last = el.getBoundingClientRect().width, t = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const w = el.getBoundingClientRect().width;
+        if (Math.abs(w - last) >= 1) { last = w; cb(); }
+      }, 150);
+    });
+  }
+
+  // Wire a segmented control (buttons with data-value). Returns a getter.
+  function segmented(container, onChange) {
+    const buttons = [...container.querySelectorAll("button")];
+    let value = buttons.find((b) => b.getAttribute("aria-pressed") === "true").dataset.value;
+    buttons.forEach((b) => b.addEventListener("click", () => {
+      buttons.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+      value = b.dataset.value;
+      if (onChange) onChange(value);
+    }));
+    return () => value;
+  }
+
+  window.ML = {
+    fitCanvas, colormap, fmt, drawLineChart, cssVar, CLASS_COLORS, CLASS_RGB,
+    rng, randn, plot2d, drawGrid, drawPoint, hitPoint, pointerPos, onWidthChange, segmented,
+  };
 })();
