@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f1115">
-  <title>ML Playground</title>
+  <title data-i18n="index.title">ML Playground</title>
   <meta name="description" content="Interactive visualizations of machine learning algorithms for students.">
-  <link rel="stylesheet" href="assets/style.css?v=2">
+  <link rel="stylesheet" href="assets/style.css?v=3">
 </head>
 <body>
   <div class="wrap">
     <header class="site-header">
       <h1>ML Playground</h1>
-      <p class="lead">
+      <p class="lead" data-i18n="index.lead">
         Interactive pictures of machine learning algorithms. Tap, drag and break things to see how they work.
         Topics follow the <a href="https://contest.yandex.ru/tracks/ml/" target="_blank" rel="noopener">Yandex ML handbook</a>
         (in Russian); the numbers suggest an order.
@@ -21,85 +21,88 @@
 
     <main>
       <section>
-        <h2 class="section-title">Optimization</h2>
+        <h2 class="section-title"><span data-i18n>Optimization</span></h2>
         <div class="cards">
           <a class="card" href="topics/gradient-descent.html">
             <span class="num">1</span>
-            <h3>Gradient descent</h3>
-            <p>Roll a ball down a loss surface and see what the learning rate does.</p>
-            <span class="tag">Open</span><span class="ref">handbook §2.2, ch. 14</span>
+            <h3 data-i18n>Gradient descent</h3>
+            <p data-i18n>Roll a ball down a loss surface and see what the learning rate does.</p>
+            <span class="tag" data-i18n>Open</span><span class="ref" data-i18n>handbook §2.2, ch. 14</span>
           </a>
         </div>
       </section>
 
       <section>
-        <h2 class="section-title">Classical supervised learning <span class="ref">handbook ch. 2</span></h2>
+        <h2 class="section-title"><span data-i18n>Classical supervised learning</span> <span class="ref" data-i18n>handbook ch. 2</span></h2>
         <div class="cards">
           <a class="card" href="topics/linear-regression.html">
             <span class="num">2</span>
-            <h3>Linear regression</h3>
-            <p>Fit a line by least squares or gradient descent; see how outliers pull on it.</p>
-            <span class="tag">Open</span><span class="ref">§2.2</span>
+            <h3 data-i18n>Linear regression</h3>
+            <p data-i18n>Fit a line by least squares or gradient descent; see how outliers pull on it.</p>
+            <span class="tag" data-i18n>Open</span><span class="ref">§2.2</span>
           </a>
           <a class="card" href="topics/logistic-regression.html">
             <span class="num">3</span>
-            <h3>Logistic regression</h3>
-            <p>A straight boundary between two classes, with a probability everywhere.</p>
-            <span class="tag">Open</span><span class="ref">§2.2</span>
+            <h3 data-i18n>Logistic regression</h3>
+            <p data-i18n>A straight boundary between two classes, with a probability everywhere.</p>
+            <span class="tag" data-i18n>Open</span><span class="ref">§2.2</span>
           </a>
           <a class="card" href="topics/knn.html">
             <span class="num">4</span>
-            <h3>k-nearest neighbors</h3>
-            <p>Classify a point by asking its closest neighbors to vote.</p>
-            <span class="tag">Open</span><span class="ref">§2.3</span>
+            <h3 data-i18n>k-nearest neighbors</h3>
+            <p data-i18n>Classify a point by asking its closest neighbors to vote.</p>
+            <span class="tag" data-i18n>Open</span><span class="ref">§2.3</span>
           </a>
           <a class="card" href="topics/decision-tree.html">
             <span class="num">5</span>
-            <h3>Decision tree</h3>
-            <p>Split the plane with yes/no questions, one greedy cut at a time.</p>
-            <span class="tag">Open</span><span class="ref">§2.4</span>
+            <h3 data-i18n>Decision tree</h3>
+            <p data-i18n>Split the plane with yes/no questions, one greedy cut at a time.</p>
+            <span class="tag" data-i18n>Open</span><span class="ref">§2.4</span>
           </a>
           <div class="card soon" aria-disabled="true">
-            <h3>Ensembles &amp; gradient boosting</h3>
-            <p>Many weak trees that vote, or that fix each other's mistakes.</p>
-            <span class="tag">Coming soon</span><span class="ref">§2.5–2.6</span>
+            <h3 data-i18n>Ensembles &amp; gradient boosting</h3>
+            <p data-i18n>Many weak trees that vote, or that fix each other's mistakes.</p>
+            <span class="tag" data-i18n>Coming soon</span><span class="ref">§2.5–2.6</span>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 class="section-title">Evaluating models <span class="ref">handbook ch. 3, 12</span></h2>
+        <h2 class="section-title"><span data-i18n>Evaluating models</span> <span class="ref" data-i18n>handbook ch. 3, 12</span></h2>
         <div class="cards">
           <a class="card" href="topics/overfitting.html">
             <span class="num">6</span>
-            <h3>Overfitting</h3>
-            <p>Train error vs test error, bias vs variance, and three ways to cure it.</p>
-            <span class="tag">Open</span><span class="ref">§3.3, §12.1</span>
+            <h3 data-i18n>Overfitting</h3>
+            <p data-i18n>Train error vs test error, bias vs variance, and three ways to cure it.</p>
+            <span class="tag" data-i18n>Open</span><span class="ref">§3.3, §12.1</span>
           </a>
           <div class="card soon" aria-disabled="true">
-            <h3>Classification metrics</h3>
-            <p>Precision, recall, ROC curve: what "accuracy" hides.</p>
-            <span class="tag">Coming soon</span><span class="ref">§3.2</span>
+            <h3 data-i18n>Classification metrics</h3>
+            <p data-i18n>Precision, recall, ROC curve: what "accuracy" hides.</p>
+            <span class="tag" data-i18n>Coming soon</span><span class="ref">§3.2</span>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 class="section-title">Neural networks <span class="ref">handbook ch. 5</span></h2>
+        <h2 class="section-title"><span data-i18n>Neural networks</span> <span class="ref" data-i18n>handbook ch. 5</span></h2>
         <div class="cards">
           <div class="card soon" aria-disabled="true">
-            <h3>A tiny neural network</h3>
-            <p>Layers, activations and backpropagation on a 2D toy problem.</p>
-            <span class="tag">Coming soon</span><span class="ref">§5.1–5.2</span>
+            <h3 data-i18n>A tiny neural network</h3>
+            <p data-i18n>Layers, activations and backpropagation on a 2D toy problem.</p>
+            <span class="tag" data-i18n>Coming soon</span><span class="ref">§5.1–5.2</span>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer" data-i18n="index.footer">
       Plain HTML, CSS and JavaScript. Every topic has a numpy reference implementation in <code>python/</code>.
       Explanations here are our own; the handbook is linked for the full theory.
     </footer>
   </div>
+
+  <script src="assets/i18n.js?v=3"></script>
+  <script src="assets/ru-common.js?v=3"></script>
 </body>
 </html>

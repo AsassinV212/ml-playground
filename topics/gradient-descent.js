@@ -3,7 +3,7 @@
 (function () {
   "use strict";
 
-  const { fitCanvas, colormap, fmt, drawLineChart } = window.ML;
+  const { fitCanvas, colormap, fmt, drawLineChart, statusLine, onLang, t } = window.ML;
 
   // --- Loss surfaces ------------------------------------------------------
   // f(x, y) is the loss, grad(x, y) its gradient [df/dx, df/dy].
@@ -51,7 +51,7 @@
   const lrOut = $("lr-out");
   const surfaceSelect = $("surface-select");
   const runBtn = $("run");
-  const statusEl = $("status");
+  const setStatus = statusLine($("status"));
 
   // --- State --------------------------------------------------------------
 
@@ -85,10 +85,10 @@
       return { done: true, cls: "bad", msg: "Diverged: each step overshoots further. Lower the learning rate." };
     }
     if (Math.hypot(gx, gy) < CONVERGED) {
-      return { done: true, cls: "good", msg: "Converged after " + (path.length - 1) + " steps." };
+      return { done: true, cls: "good", msg: "Converged after {n} steps.", vars: { n: path.length - 1 } };
     }
     if (path.length - 1 >= MAX_STEPS) {
-      return { done: true, cls: "", msg: "Stopped after " + MAX_STEPS + " steps. Still moving: the learning rate may be too small." };
+      return { done: true, cls: "", msg: "Stopped after {n} steps. Still moving: the learning rate may be too small.", vars: { n: MAX_STEPS } };
     }
     return { done: false };
   }
@@ -169,7 +169,7 @@
       ctx.stroke();
       ctx.fillStyle = "rgba(255,255,255,0.75)";
       ctx.textAlign = sx > w - 60 ? "right" : "center";
-      ctx.fillText(m.label, sx, sy + 8);
+      ctx.fillText(t(m.label), sx, sy + 8);
     }
     ctx.textAlign = "left";
 
@@ -214,11 +214,6 @@
     $("stat-pos").textContent = "(" + x.toFixed(2) + ", " + y.toFixed(2) + ")";
   }
 
-  function setStatus(msg, cls) {
-    statusEl.textContent = msg || "";
-    statusEl.className = "status" + (cls ? " " + cls : "");
-  }
-
   // --- Controls ---------------------------------------------------------------
 
   function reset() {
@@ -233,14 +228,14 @@
     if (checkState().done && path.length > 1) return;
     step();
     const s = checkState();
-    if (s.done) { stop(); setStatus(s.msg, s.cls); } else setStatus("");
+    if (s.done) { stop(); setStatus(s.msg, s.cls, s.vars); } else setStatus("");
     render();
   }
 
   function run() {
     if (timer) { stop(); return; }
     if (checkState().done && path.length > 1) reset();
-    runBtn.textContent = "Pause";
+    runBtn.textContent = t("Pause");
     timer = setInterval(() => {
       doStep();
     }, STEP_MS);
@@ -249,7 +244,7 @@
   function stop() {
     if (timer) clearInterval(timer);
     timer = null;
-    runBtn.textContent = "Run";
+    runBtn.textContent = t("Run");
   }
 
   function setLr(value) {
@@ -298,6 +293,11 @@
       buildHeatmap();
       render();
     }, 150);
+  });
+
+  onLang(() => {
+    runBtn.textContent = t(timer ? "Pause" : "Run");
+    render();
   });
 
   chooseSurface(surfaceSelect.value);

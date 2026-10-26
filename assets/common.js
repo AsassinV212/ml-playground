@@ -4,6 +4,9 @@
 (function () {
   "use strict";
 
+  // Translate if assets/i18n.js is loaded, otherwise keep English.
+  const t = (s, vars) => (window.I18N ? window.I18N.t(s, vars) : s);
+
   // Resize a canvas's backing store to its CSS size times the device pixel ratio,
   // so drawings stay sharp on Retina screens. Afterwards, draw in CSS pixels.
   function fitCanvas(canvas) {
@@ -64,7 +67,7 @@
 
     const finite = values.filter(isFinite);
     if (finite.length === 0) {
-      ctx.fillText(opts.empty || "no data yet", pad.l, h / 2);
+      ctx.fillText(t(opts.empty || "no data yet"), pad.l, h / 2);
       return;
     }
     const minV = Math.min.apply(null, finite);
@@ -78,11 +81,11 @@
     const Y = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (h - pad.t - pad.b);
 
     ctx.textBaseline = "top";
-    ctx.fillText((opts.label || "") + " max " + fmt(maxV), pad.l, 2);
+    ctx.fillText(t(opts.label || "") + " " + t("max") + " " + fmt(maxV), pad.l, 2);
     ctx.textBaseline = "bottom";
-    ctx.fillText("min " + fmt(minV), pad.l, h - 2);
+    ctx.fillText(t("min") + " " + fmt(minV), pad.l, h - 2);
     ctx.textAlign = "right";
-    ctx.fillText("step " + (values.length - 1), w - pad.r, h - 2);
+    ctx.fillText(t("step") + " " + (values.length - 1), w - pad.r, h - 2);
     ctx.textAlign = "left";
 
     ctx.strokeStyle = color;
@@ -210,8 +213,25 @@
     return () => value;
   }
 
+  // A status line. Messages are English templates; the line re-translates
+  // itself when the language changes.
+  function statusLine(el) {
+    let last = null;
+    function set(msg, cls, vars) {
+      last = [msg, cls, vars];
+      el.textContent = msg ? t(msg, vars) : "";
+      el.className = "status" + (cls ? " " + cls : "");
+    }
+    if (window.I18N) window.I18N.onChange(() => last && set.apply(null, last));
+    return set;
+  }
+
+  // Run `fn` whenever the language is switched (no-op without i18n).
+  const onLang = (fn) => window.I18N && window.I18N.onChange(fn);
+
   window.ML = {
-    fitCanvas, colormap, fmt, drawLineChart, cssVar, CLASS_COLORS, CLASS_RGB,
+    t, fitCanvas, colormap, fmt, drawLineChart, cssVar, CLASS_COLORS, CLASS_RGB,
     rng, randn, plot2d, drawGrid, drawPoint, hitPoint, pointerPos, onWidthChange, segmented,
+    statusLine, onLang,
   };
 })();

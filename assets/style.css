@@ -48,8 +48,19 @@ code {
 /* Header */
 
 .site-header {
+  position: relative;
   padding: 20px 0 8px;
 }
+.lang-toggle {
+  position: absolute;
+  top: 14px;
+  right: 0;
+  min-width: 52px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.site-header h1 { padding-right: 64px; }
 .site-header .back {
   display: inline-block;
   color: var(--muted);
