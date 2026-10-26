@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Logistic Regression · ml-playground</title>
+  <meta name="description" content="Train a linear classifier that outputs probabilities, and see what L2 regularization does.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="back" href="../index.html">← All topics</a>
+      <h1>Logistic regression</h1>
+      <p class="lead">A straight boundary between two classes, plus a probability for every point of the plane.</p>
+    </header>
+
+    <main>
+      <section class="demo">
+        <div class="panel">
+          <canvas id="plot" class="plot square" aria-label="Two classes of points and the probability map"></canvas>
+          <p class="hint">Solid line: p = 0.5. Dashed lines: p = 0.1 and 0.9. Tap to add a point of the chosen color, tap a point to remove it.</p>
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <span class="label">Add points of class</span>
+            <div class="segmented" id="class-picker">
+              <button type="button" data-value="0" aria-pressed="true"><span class="swatch" style="background:#ff7a59"></span>Coral</button>
+              <button type="button" data-value="1" aria-pressed="false"><span class="swatch" style="background:#5fb4ff"></span>Blue</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="l2">L2 regularization <output id="l2-out" for="l2"></output></label>
+            <input id="l2" type="range" min="-4" max="0" step="0.1" value="-4">
+          </div>
+
+          <div class="buttons">
+            <button id="step" type="button">Step</button>
+            <button id="run" type="button" class="primary">Run</button>
+            <button id="reset" type="button">Reset</button>
+          </div>
+          <div class="buttons">
+            <button id="separable" type="button">Separable</button>
+            <button id="overlap" type="button">Overlap</button>
+            <button id="clear" type="button">Clear</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="k">log loss</div><div class="v" id="stat-loss">–</div></div>
+            <div class="stat"><div class="k">accuracy</div><div class="v" id="stat-acc">–</div></div>
+            <div class="stat"><div class="k">|w| (sharpness)</div><div class="v" id="stat-w">–</div></div>
+            <div class="stat"><div class="k">step</div><div class="v" id="stat-step">0</div></div>
+          </div>
+
+          <p id="status" class="status" role="status"></p>
+          <canvas id="loss-chart" class="plot chart" aria-label="Log loss at each step"></canvas>
+        </div>
+      </section>
+
+      <article class="prose">
+        <h2>From a line to a probability</h2>
+        <p>
+          A linear model computes a score <code>z = w₁x₁ + w₂x₂ + b</code>. The boundary
+          <code>z = 0</code> is a straight line; <code>z</code> is positive on one side and negative on the
+          other, and its size grows with the distance from the line. To turn the score into a probability we
+          squash it with the <strong>sigmoid</strong>:
+        </p>
+        <p class="formula">p(blue) = σ(z) = 1 / (1 + e^(−z))</p>
+        <p>
+          Far on the blue side <code>p → 1</code>, far on the coral side <code>p → 0</code>, and exactly on the
+          line <code>p = 0.5</code>.
+        </p>
+
+        <h2>A physics picture: the Fermi–Dirac distribution</h2>
+        <p>
+          The sigmoid is the Fermi–Dirac function <code>1 / (1 + e^((E − μ)/kT))</code> from statistical physics.
+          The distance from the boundary plays the role of energy, and <code>1/|w|</code> plays the role of
+          temperature. Small weights: a "hot", blurry transition with a wide band of uncertain points. Large
+          weights: a "cold", sharp step. Watch the dashed lines (p = 0.1 and 0.9) move together as
+          <code>|w|</code> grows.
+        </p>
+
+        <h2>The loss: log loss</h2>
+        <p>
+          For a blue point the model pays <code>−log p</code>; for a coral point <code>−log(1 − p)</code>.
+          A confident correct answer costs almost nothing, an unsure one costs about 0.69, and a confident wrong
+          answer costs a lot. The gradient has a very simple form: for each point,
+          <code>(p − label) × input</code>. It looks exactly like the one in linear regression, just with
+          <code>p</code> in place of <code>ŷ</code>.
+        </p>
+
+        <h2>Why the weights can grow forever</h2>
+        <p>
+          If a straight line separates the classes perfectly, making the sigmoid sharper always lowers the loss a
+          little: correct answers get even more confident. So <code>|w|</code> keeps growing, and the system
+          "cools towards absolute zero". The model becomes overconfident, and gradient descent never
+          stops. Press <strong>Separable</strong>, run it, and watch <code>|w|</code>.
+        </p>
+        <p>
+          <strong>L2 regularization</strong> adds <code>(λ/2)·|w|²</code> to the loss: a spring that pulls the
+          weights back towards zero. The weights stop where the pull of the data and the pull of the spring
+          balance, and the model keeps an honest band of uncertainty.
+        </p>
+
+        <h2>Try this</h2>
+        <ul>
+          <li>Separable data, L2 off: run, and read |w| after the run stops. Then set L2 to 0.01 and run again.</li>
+          <li>Overlap: the accuracy cannot reach 100%, but the probabilities still make sense.</li>
+          <li>Put a single blue point deep inside the coral cloud. How much does the line move?</li>
+        </ul>
+
+        <h2>Reference code</h2>
+        <p>
+          Python with numpy: <a href="../python/logistic_regression.py">python/logistic_regression.py</a>.
+        </p>
+
+        <p class="source">
+          Go deeper: <a href="https://contest.yandex.ru/tracks/ml/supervised-learning/linear-models" target="_blank" rel="noopener">§2.2 Linear models</a>
+          in the Yandex ML handbook (in Russian): linear classification, logistic regression, the multiclass case.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+  </div>
+
+  <script src="../assets/common.js"></script>
+  <script src="logistic-regression.js"></script>
+</body>
+</html>
