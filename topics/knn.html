@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>k-Nearest Neighbors · ml-playground</title>
+  <meta name="description" content="Classify a point by asking its closest neighbors, and see how k and the distance change the map.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="back" href="../index.html">← All topics</a>
+      <h1>k-nearest neighbors</h1>
+      <p class="lead">No training at all: to classify a point, ask the k closest known points and take a vote.</p>
+    </header>
+
+    <main>
+      <section class="demo">
+        <div class="panel">
+          <canvas id="plot" class="plot square" aria-label="Points and the regions each class wins"></canvas>
+          <p class="hint">Color shows which class wins the vote at each spot; brighter means a more unanimous vote.</p>
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <span class="label">Tap the map to</span>
+            <div class="segmented" id="mode">
+              <button type="button" data-value="0" aria-pressed="true"><span class="swatch" style="background:#ff7a59"></span>Add</button>
+              <button type="button" data-value="1" aria-pressed="false"><span class="swatch" style="background:#5fb4ff"></span>Add</button>
+              <button type="button" data-value="2" aria-pressed="false"><span class="swatch" style="background:#ffd166"></span>Add</button>
+              <button type="button" data-value="probe" aria-pressed="false">Probe</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="k">k, number of neighbours <output id="k-out" for="k"></output></label>
+            <input id="k" type="range" min="1" max="30" step="1" value="1">
+          </div>
+
+          <div class="field">
+            <label for="metric">Distance</label>
+            <select id="metric">
+              <option value="euclidean">Euclidean: straight line</option>
+              <option value="manhattan">Manhattan: |dx| + |dy|</option>
+            </select>
+          </div>
+
+          <div class="buttons">
+            <button id="blobs" type="button">Blobs</button>
+            <button id="noisy" type="button">Noisy</button>
+            <button id="clear" type="button">Clear</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="k">k</div><div class="v" id="stat-k">–</div></div>
+            <div class="stat"><div class="k">points</div><div class="v" id="stat-n">–</div></div>
+            <div class="stat"><div class="k">training accuracy</div><div class="v" id="stat-train">–</div></div>
+            <div class="stat"><div class="k">leave-one-out accuracy</div><div class="v" id="stat-loo">–</div></div>
+          </div>
+
+          <p id="status" class="status" role="status"></p>
+        </div>
+      </section>
+
+      <article class="prose">
+        <h2>The algorithm</h2>
+        <p>
+          To predict the class of a new point:
+        </p>
+        <ol>
+          <li>measure the distance from it to every known point;</li>
+          <li>take the <code>k</code> closest ones;</li>
+          <li>answer with the class that most of them have.</li>
+        </ol>
+        <p>
+          That's all. There is nothing to train: the "model" is the data itself. The price is paid at prediction
+          time, when every query has to look through the whole dataset. Choose <strong>Probe</strong> and drag
+          around to see the neighbours being asked.
+        </p>
+
+        <h2>A physics picture</h2>
+        <p>
+          With <code>k = 1</code> every point owns the region of space that is closer to it than to any other
+          point. These are <em>Voronoi cells</em>; in a crystal the same construction gives the Wigner–Seitz
+          cell. The map becomes a mosaic of tiny territories, and one mislabelled point carves out its own island.
+        </p>
+        <p>
+          Larger <code>k</code> is <em>coarse-graining</em>: averaging over a bigger volume, like measuring
+          temperature with a bigger thermometer. Noise is averaged away, but so are fine details. With
+          <code>k</code> equal to the number of points, the whole map votes for the most common class.
+        </p>
+
+        <h2>Choosing k honestly</h2>
+        <p>
+          With <code>k = 1</code> the <em>training accuracy</em> is always 100%: each point is its own nearest
+          neighbour. That number is useless. <em>Leave-one-out accuracy</em> is fair: each point is classified by
+          all the <em>other</em> points, as if it were new data. Press <strong>Noisy</strong> and move <code>k</code>:
+          training accuracy falls while leave-one-out accuracy first rises, then falls. The best <code>k</code>
+          is somewhere in the middle.
+        </p>
+
+        <h2>The distance matters</h2>
+        <p>
+          "Nearest" depends on how distance is measured. The set of points within a fixed distance is a circle for
+          the Euclidean distance and a diamond for the Manhattan distance <code>|dx| + |dy|</code>. Probe a point
+          and switch the metric to see the neighbourhood change shape. In real data, features measured in
+          different units (metres and kilograms) must be scaled first, or one of them will dominate the distance.
+        </p>
+
+        <h2>Try this</h2>
+        <ul>
+          <li>Blobs, k = 1: add a single yellow point inside the coral cloud. Then raise k to 5.</li>
+          <li>Noisy: find the k with the best leave-one-out accuracy.</li>
+          <li>Probe on the border between two classes and slowly increase k. When does the answer flip?</li>
+        </ul>
+
+        <h2>Reference code</h2>
+        <p>
+          Python with numpy: <a href="../python/knn.py">python/knn.py</a>.
+        </p>
+
+        <p class="source">
+          Go deeper: <a href="https://contest.yandex.ru/tracks/ml/supervised-learning/metric-methods" target="_blank" rel="noopener">§2.3 Metric methods</a>
+          in the Yandex ML handbook (in Russian): weighted kNN, choosing the metric, fast neighbour search.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+  </div>
+
+  <script src="../assets/common.js"></script>
+  <script src="knn.js"></script>
+</body>
+</html>
