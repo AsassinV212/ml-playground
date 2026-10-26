@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Gradient Descent · ml-playground</title>
+  <meta name="description" content="Watch a ball roll down a loss surface and see how the learning rate changes its path.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="back" href="../index.html">← All topics</a>
+      <h1>Gradient descent</h1>
+      <p class="lead">A ball rolls downhill on a loss surface, one step at a time. Change the learning rate and watch what happens.</p>
+    </header>
+
+    <main>
+      <section class="demo">
+        <div class="panel">
+          <canvas id="surface" class="plot square" aria-label="Loss surface with the path of gradient descent"></canvas>
+          <p class="hint">Darker = lower loss. Tap anywhere to set the starting point.</p>
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <label for="surface-select">Surface</label>
+            <select id="surface-select">
+              <option value="bowl">Simple bowl</option>
+              <option value="valley">Stretched valley</option>
+              <option value="local">Surface with a local minimum</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="lr">Learning rate <output id="lr-out" for="lr"></output></label>
+            <input id="lr" type="range" min="-3" max="0.2" step="0.01">
+          </div>
+
+          <div class="buttons">
+            <button id="step" type="button">Step</button>
+            <button id="run" type="button" class="primary">Run</button>
+            <button id="reset" type="button">Reset</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="k">step</div><div class="v" id="stat-iter">0</div></div>
+            <div class="stat"><div class="k">loss</div><div class="v" id="stat-loss">–</div></div>
+            <div class="stat"><div class="k">|gradient|</div><div class="v" id="stat-grad">–</div></div>
+            <div class="stat"><div class="k">position (x, y)</div><div class="v" id="stat-pos">–</div></div>
+          </div>
+
+          <p id="status" class="status" role="status"></p>
+          <canvas id="loss-chart" class="plot chart" aria-label="Loss at each step"></canvas>
+        </div>
+      </section>
+
+      <article class="prose">
+        <h2>What is gradient descent?</h2>
+        <p>
+          Training a model means finding parameters that make the <em>loss</em> (the error) small.
+          Picture the loss as a landscape: every point on the map is one choice of parameters
+          <code>(x, y)</code>, and the height there is the loss. We want the lowest valley.
+        </p>
+        <p>
+          The <strong>gradient</strong> <code>∇L</code> is an arrow pointing in the direction where the loss
+          grows fastest; its length says how steep the slope is. So we step the opposite way:
+        </p>
+        <p class="formula">p_new = p − learning_rate × ∇L(p)</p>
+        <p>
+          Repeat this and the point slides downhill until the ground is flat (the gradient is almost zero).
+        </p>
+
+        <h2>A physics picture</h2>
+        <p>
+          Think of a ball rolling in thick honey. Friction is so strong that the ball has no momentum:
+          its velocity is simply proportional to the force, and the force is <code>−∇L</code>.
+          Gradient descent simulates exactly this motion, and the learning rate is the size of the
+          time step in that simulation.
+        </p>
+
+        <h2>Too small a learning rate</h2>
+        <p>
+          Tiny time steps: the path is smooth and safe, but it takes hundreds of steps to get anywhere.
+          On a real model each step costs a pass over the data, so this wastes a lot of time.
+        </p>
+
+        <h2>Too large a learning rate</h2>
+        <p>
+          Big time steps overshoot. The ball jumps past the bottom to the opposite slope, which is even
+          steeper, so the next jump is bigger still. On the simple bowl each step multiplies the distance
+          to the minimum by <code>(1 − 2 × learning_rate)</code>:
+        </p>
+        <ul>
+          <li>below 0.5 — the ball moves straight to the bottom;</li>
+          <li>between 0.5 and 1 — it bounces from side to side but still settles;</li>
+          <li>above 1 — every bounce is bigger than the last, and the loss explodes.</li>
+        </ul>
+        <p>
+          In the stretched valley the steep direction sets the limit, so with a large learning rate the
+          ball zig-zags across the valley while creeping slowly along it. Fixing this is what
+          methods like momentum and Adam are for.
+        </p>
+
+        <h2>Local minima</h2>
+        <p>
+          Gradient descent only sees the slope under its feet. On the third surface, start on the right
+          and the ball settles in the shallow dip; start on the left and it finds the deeper one.
+          Where you start matters.
+        </p>
+
+        <h2>Try this</h2>
+        <ul>
+          <li>Bowl: set the learning rate to about 0.8, then to 1.05. Compare the loss charts.</li>
+          <li>Valley: find the largest learning rate that still converges (hint: about 0.2).</li>
+          <li>Local minimum: tap several starting points and see which ones get stuck.</li>
+        </ul>
+
+        <h2>Reference code</h2>
+        <p>
+          The same algorithm in Python (numpy only), with tests:
+          <a href="../python/gradient_descent.py">python/gradient_descent.py</a>.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+  </div>
+
+  <script src="../assets/common.js"></script>
+  <script src="gradient-descent.js"></script>
+</body>
+</html>
