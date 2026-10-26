@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Decision Tree · ml-playground</title>
+  <meta name="description" content="Grow a decision tree split by split and see how depth turns a rough guess into memorization.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="back" href="../index.html">← All topics</a>
+      <h1>Decision tree</h1>
+      <p class="lead">Split the plane with yes/no questions like "is x &lt; 1.3?", always picking the question that sorts the points best.</p>
+    </header>
+
+    <main>
+      <section class="demo">
+        <div class="panel">
+          <canvas id="plot" class="plot square" aria-label="Points and the rectangles the tree cuts the plane into"></canvas>
+          <p class="hint">Thicker lines are earlier questions. Tap to add a point, tap a point to remove it.</p>
+        </div>
+
+        <div class="panel">
+          <div class="field">
+            <span class="label">Add points of class</span>
+            <div class="segmented" id="class-picker">
+              <button type="button" data-value="0" aria-pressed="true"><span class="swatch" style="background:#ff7a59"></span>Coral</button>
+              <button type="button" data-value="1" aria-pressed="false"><span class="swatch" style="background:#5fb4ff"></span>Blue</button>
+              <button type="button" data-value="2" aria-pressed="false"><span class="swatch" style="background:#ffd166"></span>Yellow</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="depth">Max depth <output id="depth-out" for="depth"></output></label>
+            <input id="depth" type="range" min="1" max="10" step="1" value="2">
+          </div>
+
+          <div class="field">
+            <label for="min-leaf">Min points per leaf <output id="leaf-out" for="min-leaf"></output></label>
+            <input id="min-leaf" type="range" min="1" max="20" step="1" value="1">
+          </div>
+
+          <div class="field">
+            <label for="criterion">Split criterion</label>
+            <select id="criterion">
+              <option value="gini">Gini impurity</option>
+              <option value="entropy">Entropy</option>
+            </select>
+          </div>
+
+          <div class="buttons four">
+            <button id="blobs" type="button">Blobs</button>
+            <button id="xor" type="button">XOR</button>
+            <button id="circle" type="button">Circle</button>
+            <button id="clear" type="button">Clear</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="k">points</div><div class="v" id="stat-n">–</div></div>
+            <div class="stat"><div class="k">training accuracy</div><div class="v" id="stat-acc">–</div></div>
+            <div class="stat"><div class="k">leaves</div><div class="v" id="stat-leaves">–</div></div>
+            <div class="stat"><div class="k">depth</div><div class="v" id="stat-depth">–</div></div>
+          </div>
+
+          <pre id="tree" class="tree" aria-label="The tree as text"></pre>
+        </div>
+      </section>
+
+      <article class="prose">
+        <h2>How a tree predicts</h2>
+        <p>
+          A decision tree is a chain of yes/no questions about the features. Start at the top (the
+          <em>root</em>), answer "is x &lt; 1.3?", go left or right, answer the next question, and so on until
+          you reach a <em>leaf</em>. The leaf holds the answer: the most common class of the training points that
+          ended up there. On the plot every question is a straight cut parallel to an axis, so the plane is
+          divided into rectangles.
+        </p>
+
+        <h2>How a tree is grown</h2>
+        <p>
+          Finding the best possible tree is hopelessly slow, so it is grown <em>greedily</em>. At each node, try
+          every feature and every threshold between neighbouring points, and pick the one that makes the two
+          halves as <em>pure</em> as possible. Then repeat inside each half. Stop when the node is pure, the depth
+          limit is reached, or a leaf would get too few points.
+        </p>
+
+        <h2>A physics picture: entropy</h2>
+        <p>
+          Purity is measured with the same idea as entropy in statistical physics: how disordered the node is.
+          For class shares <code>p₁, p₂, …</code>:
+        </p>
+        <p class="formula">entropy = −Σ pᵢ · log₂ pᵢ        gini = 1 − Σ pᵢ²</p>
+        <p>
+          A node with only one class has zero entropy, like a perfect crystal. A 50/50 mix has one bit of entropy,
+          like a gas in which every particle is equally likely to be anywhere. Each split is chosen to make the
+          biggest drop in average entropy, the <em>information gain</em>. A good question is one whose answer
+          tells you the most. Gini behaves almost the same and is a bit cheaper to compute.
+        </p>
+
+        <h2>Depth: from rough to memorizing</h2>
+        <p>
+          A shallow tree draws a few big rectangles: simple, but it misses the shape (<em>underfitting</em>).
+          A deep tree keeps cutting until every leaf is pure, and carves a tiny box around every noisy point
+          (<em>overfitting</em>). Training accuracy reaches 100%, but those little boxes are wrong for new data.
+          Max depth and min points per leaf are the brakes. See the <a href="overfitting.html">overfitting</a>
+          page for how to choose them honestly.
+        </p>
+
+        <h2>Where greedy fails</h2>
+        <p>
+          Press <strong>XOR</strong> and set depth to 1 or 2. In a perfect XOR pattern no single cut helps: both
+          halves stay 50/50, so a greedy tree sees no reason to split at all, even though two cuts would solve
+          the whole problem. Here a few noisy points let it start, but the first cut is often in a poor place.
+          Looking only one step ahead is what makes trees fast, and also what makes them imperfect.
+        </p>
+
+        <h2>Try this</h2>
+        <ul>
+          <li>Circle: raise the depth one step at a time and watch the circle get built from rectangles.</li>
+          <li>Set depth 10, then raise "min points per leaf" until the noisy islands disappear.</li>
+          <li>Switch between Gini and entropy. How often does the tree change?</li>
+        </ul>
+
+        <h2>Reference code</h2>
+        <p>
+          Python with numpy: <a href="../python/decision_tree.py">python/decision_tree.py</a>.
+        </p>
+
+        <p class="source">
+          Go deeper: <a href="https://contest.yandex.ru/tracks/ml/supervised-learning/decision-trees" target="_blank" rel="noopener">§2.4 Decision trees</a>
+          in the Yandex ML handbook (in Russian): split criteria for regression, missing values, regularization.
+          Trees are the building block of <a href="https://contest.yandex.ru/tracks/ml/supervised-learning/ensembles-in-machine-learning" target="_blank" rel="noopener">ensembles</a>
+          and <a href="https://contest.yandex.ru/tracks/ml/supervised-learning/gradient-boosting" target="_blank" rel="noopener">gradient boosting</a>.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+  </div>
+
+  <script src="../assets/common.js"></script>
+  <script src="decision-tree.js"></script>
+</body>
+</html>

@@ -167,6 +167,8 @@ input[type="range"] {
 
 .buttons + .buttons { margin-top: 8px; }
 .buttons.two { grid-template-columns: repeat(2, 1fr); }
+.buttons.four { grid-template-columns: repeat(4, 1fr); }
+.buttons.four button { padding: 0 4px; }
 button:disabled { opacity: 0.4; cursor: default; }
 
 /* Segmented control: one pressed button out of several */
