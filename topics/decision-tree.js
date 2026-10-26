@@ -5,7 +5,7 @@
 
   const {
     plot2d, drawGrid, drawPoint, hitPoint, pointerPos, onWidthChange,
-    segmented, rng, randn, CLASS_COLORS, CLASS_RGB,
+    segmented, rng, randn, CLASS_COLORS, CLASS_RGB, onLang, t,
   } = window.ML;
 
   const BOX = [-5, 5, -5, 5];
@@ -118,7 +118,7 @@
   function treeText(node, prefix, isLast, isRoot) {
     const branch = isRoot ? "" : prefix + (isLast ? "└─ " : "├─ ");
     const line = node.leaf
-      ? `${NAMES[node.label]}  (${node.counts[node.label]}/${node.n})`
+      ? `${t(NAMES[node.label])}  (${node.counts[node.label]}/${node.n})`
       : `${AXES[node.f]} < ${node.t.toFixed(2)} ?`;
     if (node.leaf) return branch + line + "\n";
     const childPrefix = isRoot ? "" : prefix + (isLast ? "   " : "│  ");
@@ -149,7 +149,7 @@
     drawGrid(view, 1, false);
     for (const p of points) drawPoint(ctx, view.sx(p.x), view.sy(p.y), CLASS_COLORS[p.c], 5);
 
-    $("tree").textContent = tree ? treeText(tree, "", true, true) : "Add some points.";
+    $("tree").textContent = tree ? treeText(tree, "", true, true) : t("Add some points.");
     $("stat-n").textContent = points.length;
     $("stat-leaves").textContent = tree ? countLeaves(tree) : "–";
     $("stat-depth").textContent = tree ? depthOf(tree) : "–";
@@ -199,6 +199,8 @@
   });
 
   onWidthChange(canvas, () => { view = plot2d(canvas, BOX); render(); });
+
+  onLang(render);
 
   view = plot2d(canvas, BOX);
   makeData("circle");

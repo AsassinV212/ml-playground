@@ -23,6 +23,9 @@ pages are our own.
 
 Coming soon: ensembles and gradient boosting, classification metrics, a tiny neural network.
 
+Every page has a **RU/EN** button that switches the language in place, without a reload.
+The choice is remembered; on first visit Russian browsers get Russian.
+
 ## Run the site locally
 
 The site is plain HTML, CSS and JavaScript: no build step, no CDN, no packages.

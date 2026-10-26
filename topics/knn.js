@@ -5,7 +5,7 @@
 
   const {
     plot2d, drawGrid, drawPoint, hitPoint, pointerPos, onWidthChange,
-    segmented, rng, randn, CLASS_COLORS, CLASS_RGB,
+    segmented, rng, randn, CLASS_COLORS, CLASS_RGB, statusLine, onLang, t,
   } = window.ML;
 
   const BOX = [-5, 5, -5, 5];
@@ -16,15 +16,15 @@
   const canvas = $("plot");
   const kInput = $("k");
   const metricSelect = $("metric");
-  const statusEl = $("status");
+  const setStatus = statusLine($("status"));
 
   let points = [];                        // { x, y, c }
   let probe = null;                       // query point in probe mode
   let view = null;
   const mode = segmented($("mode"), (m) => {
     canvas.style.touchAction = m === "probe" ? "none" : "manipulation";
-    if (m !== "probe") { probe = null; render(); }
-    else statusEl.textContent = "Tap or drag on the map to place the query point.";
+    if (m !== "probe") { probe = null; setStatus(""); render(); }
+    else setStatus("Tap or drag on the map to place the query point.");
   });
 
   const k = () => parseInt(kInput.value, 10);
@@ -146,8 +146,8 @@
     if (probe && points.length) {
       const { idx, result } = drawProbe();
       neighbours = idx;
-      const parts = result.counts.map((n, c) => (n ? NAMES[c] + " " + n : null)).filter(Boolean);
-      statusEl.textContent = "Neighbours: " + parts.join(" · ") + " → " + NAMES[result.c];
+      const parts = result.counts.map((n, c) => (n ? t(NAMES[c]) + " " + n : null)).filter(Boolean);
+      setStatus("Neighbours: {votes} → {winner}", "", { votes: parts.join(" · "), winner: t(NAMES[result.c]) });
     }
     for (const p of points) drawPoint(ctx, view.sx(p.x), view.sy(p.y), CLASS_COLORS[p.c], 5);
     ctx.strokeStyle = "#fff";
@@ -206,7 +206,7 @@
   metricSelect.addEventListener("change", () => render());
   $("blobs").addEventListener("click", blobs);
   $("noisy").addEventListener("click", noisy);
-  $("clear").addEventListener("click", () => { points = []; probe = null; statusEl.textContent = ""; render(); });
+  $("clear").addEventListener("click", () => { points = []; probe = null; setStatus(""); render(); });
 
   function placeProbe(e) {
     const [sx, sy] = pointerPos(canvas, e);
@@ -227,6 +227,8 @@
   });
 
   onWidthChange(canvas, () => { view = plot2d(canvas, BOX); render(); });
+
+  onLang(() => render(true));
 
   view = plot2d(canvas, BOX);
   blobs();

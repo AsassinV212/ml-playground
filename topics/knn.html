@@ -4,67 +4,67 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f1115">
-  <title>k-Nearest Neighbors · ml-playground</title>
+  <title data-i18n="knn.title">k-Nearest Neighbors · ml-playground</title>
   <meta name="description" content="Classify a point by asking its closest neighbors, and see how k and the distance change the map.">
-  <link rel="stylesheet" href="../assets/style.css?v=2">
+  <link rel="stylesheet" href="../assets/style.css?v=3">
 </head>
 <body>
   <div class="wrap">
     <header class="site-header">
-      <a class="back" href="../index.html">← All topics</a>
-      <h1>k-nearest neighbors</h1>
-      <p class="lead">No training at all: to classify a point, ask the k closest known points and take a vote.</p>
+      <a class="back" href="../index.html" data-i18n>← All topics</a>
+      <h1 data-i18n>k-nearest neighbors</h1>
+      <p class="lead" data-i18n="knn.lead">No training at all: to classify a point, ask the k closest known points and take a vote.</p>
     </header>
 
     <main>
       <section class="demo">
         <div class="panel">
           <canvas id="plot" class="plot square" aria-label="Points and the regions each class wins"></canvas>
-          <p class="hint">Color shows which class wins the vote at each spot; brighter means a more unanimous vote.</p>
+          <p class="hint" data-i18n="knn.hint">Color shows which class wins the vote at each spot; brighter means a more unanimous vote.</p>
         </div>
 
         <div class="panel">
           <div class="field">
-            <span class="label">Tap the map to</span>
+            <span class="label" data-i18n>Tap the map to</span>
             <div class="segmented" id="mode">
-              <button type="button" data-value="0" aria-pressed="true"><span class="swatch" style="background:#ff7a59"></span>Add</button>
-              <button type="button" data-value="1" aria-pressed="false"><span class="swatch" style="background:#5fb4ff"></span>Add</button>
-              <button type="button" data-value="2" aria-pressed="false"><span class="swatch" style="background:#ffd166"></span>Add</button>
-              <button type="button" data-value="probe" aria-pressed="false">Probe</button>
+              <button type="button" data-value="0" aria-pressed="true"><span class="swatch" style="background:#ff7a59"></span><span data-i18n>Add</span></button>
+              <button type="button" data-value="1" aria-pressed="false"><span class="swatch" style="background:#5fb4ff"></span><span data-i18n>Add</span></button>
+              <button type="button" data-value="2" aria-pressed="false"><span class="swatch" style="background:#ffd166"></span><span data-i18n>Add</span></button>
+              <button type="button" data-value="probe" aria-pressed="false" data-i18n>Probe</button>
             </div>
           </div>
 
           <div class="field">
-            <label for="k">k, number of neighbours <output id="k-out" for="k"></output></label>
+            <label for="k"><span data-i18n>k, number of neighbours</span> <output id="k-out" for="k"></output></label>
             <input id="k" type="range" min="1" max="30" step="1" value="1">
           </div>
 
           <div class="field">
-            <label for="metric">Distance</label>
+            <label for="metric" data-i18n>Distance</label>
             <select id="metric">
-              <option value="euclidean">Euclidean: straight line</option>
-              <option value="manhattan">Manhattan: |dx| + |dy|</option>
+              <option value="euclidean" data-i18n>Euclidean: straight line</option>
+              <option value="manhattan" data-i18n>Manhattan: |dx| + |dy|</option>
             </select>
           </div>
 
           <div class="buttons">
-            <button id="blobs" type="button">Blobs</button>
-            <button id="noisy" type="button">Noisy</button>
-            <button id="clear" type="button">Clear</button>
+            <button id="blobs" type="button" data-i18n>Blobs</button>
+            <button id="noisy" type="button" data-i18n>Noisy</button>
+            <button id="clear" type="button" data-i18n>Clear</button>
           </div>
 
           <div class="stats">
             <div class="stat"><div class="k">k</div><div class="v" id="stat-k">–</div></div>
-            <div class="stat"><div class="k">points</div><div class="v" id="stat-n">–</div></div>
-            <div class="stat"><div class="k">training accuracy</div><div class="v" id="stat-train">–</div></div>
-            <div class="stat"><div class="k">leave-one-out accuracy</div><div class="v" id="stat-loo">–</div></div>
+            <div class="stat"><div class="k" data-i18n>points</div><div class="v" id="stat-n">–</div></div>
+            <div class="stat"><div class="k" data-i18n>training accuracy</div><div class="v" id="stat-train">–</div></div>
+            <div class="stat"><div class="k" data-i18n>leave-one-out accuracy</div><div class="v" id="stat-loo">–</div></div>
           </div>
 
           <p id="status" class="status" role="status"></p>
         </div>
       </section>
 
-      <article class="prose">
+      <article class="prose" data-i18n="knn.article">
         <h2>The algorithm</h2>
         <p>
           To predict the class of a new point:
@@ -128,10 +128,13 @@
       </article>
     </main>
 
-    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+    <footer class="site-footer" data-i18n>ml-playground · plain HTML, CSS and JavaScript</footer>
   </div>
 
-  <script src="../assets/common.js?v=2"></script>
-  <script src="knn.js?v=2"></script>
+  <script src="../assets/i18n.js?v=3"></script>
+  <script src="../assets/ru-common.js?v=3"></script>
+  <script src="knn.ru.js?v=3"></script>
+  <script src="../assets/common.js?v=3"></script>
+  <script src="knn.js?v=3"></script>
 </body>
 </html>

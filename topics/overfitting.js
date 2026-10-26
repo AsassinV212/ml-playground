@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  const { plot2d, drawGrid, drawPoint, fitCanvas, onWidthChange, rng, randn, fmt, cssVar } = window.ML;
+  const { plot2d, drawGrid, drawPoint, fitCanvas, onWidthChange, rng, randn, fmt, cssVar, onLang, t } = window.ML;
 
   const BOX = [0, 1, -2, 2];
   const NOISE = 0.3;
@@ -166,7 +166,7 @@
     const l2 = l2Value();
     $("degree-out").textContent = degree;
     $("n-out").textContent = nInput.value;
-    $("l2-out").textContent = l2 === 0 ? "off" : l2.toExponential(0);
+    $("l2-out").textContent = l2 === 0 ? t("off") : l2.toExponential(0);
 
     ctx.clearRect(0, 0, W, H);
     drawGrid(view, 0.5, false);
@@ -220,6 +220,8 @@
   $("resample").addEventListener("click", newSample);
 
   onWidthChange(canvas, () => { view = plot2d(canvas, BOX); render(); });
+
+  onLang(render);
 
   view = plot2d(canvas, BOX);
   train = sample(parseInt(nInput.value, 10), sampleSeed);

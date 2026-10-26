@@ -5,7 +5,7 @@
 
   const {
     plot2d, drawGrid, drawPoint, drawLineChart, hitPoint, pointerPos, onWidthChange,
-    segmented, rng, randn, fmt, cssVar, CLASS_COLORS, CLASS_RGB,
+    segmented, rng, randn, fmt, cssVar, CLASS_COLORS, CLASS_RGB, statusLine, onLang, t,
   } = window.ML;
 
   const BOX = [-5, 5, -5, 5];
@@ -19,7 +19,7 @@
   const chart = $("loss-chart");
   const l2Input = $("l2");
   const runBtn = $("run");
-  const statusEl = $("status");
+  const setStatus = statusLine($("status"));
   const currentClass = segmented($("class-picker"));
 
   let points = [];           // { x, y, c } with c = 0 (coral) or 1 (blue)
@@ -140,11 +140,6 @@
     $("stat-step").textContent = steps;
   }
 
-  function setStatus(msg, cls) {
-    statusEl.textContent = msg || "";
-    statusEl.className = "status" + (cls ? " " + cls : "");
-  }
-
   // --- Controls ---------------------------------------------------------
 
   function bothClasses() {
@@ -160,13 +155,13 @@
     if (!bothClasses()) { stop(); setStatus("Add points of both colors."); render(); return; }
     for (let i = 0; i < STEPS_PER_TICK; i++) {
       const g = step();
-      if (g < 1e-5) { stop(); setStatus("Converged after " + steps + " steps.", "good"); break; }
+      if (g < 1e-5) { stop(); setStatus("Converged after {n} steps.", "good", { n: steps }); break; }
       if (steps >= MAX_STEPS) {
         stop();
         if (l2 === 0 && accuracy() === 1) {
           setStatus("Still not converged: the classes are separable, so the weights keep growing and the edge keeps getting sharper. Turn on L2.", "bad");
         } else {
-          setStatus("Stopped after " + MAX_STEPS + " steps.");
+          setStatus("Stopped after {n} steps.", "", { n: MAX_STEPS });
         }
         break;
       }
@@ -177,14 +172,14 @@
   function run() {
     if (timer) { stop(); return; }
     setStatus("");
-    runBtn.textContent = "Pause";
+    runBtn.textContent = t("Pause");
     timer = setInterval(tick, 30);
   }
 
   function stop() {
     clearInterval(timer);
     timer = null;
-    runBtn.textContent = "Run";
+    runBtn.textContent = t("Run");
   }
 
   function resetModel() {
@@ -214,7 +209,7 @@
 
   function setL2(slider) {
     l2 = slider <= -4 ? 0 : Math.pow(10, slider);
-    $("l2-out").textContent = l2 === 0 ? "off" : l2 < 0.01 ? l2.toFixed(4) : l2.toFixed(3);
+    $("l2-out").textContent = l2 === 0 ? t("off") : l2 < 0.01 ? l2.toFixed(4) : l2.toFixed(3);
     if (points.length) { restartHistory(); render(); }
   }
 
@@ -240,6 +235,12 @@
   });
 
   onWidthChange(canvas, () => { view = plot2d(canvas, BOX); render(); });
+
+  onLang(() => {
+    runBtn.textContent = t(timer ? "Pause" : "Run");
+    if (l2 === 0) $("l2-out").textContent = t("off");
+    render();
+  });
 
   view = plot2d(canvas, BOX);
   setL2(parseFloat(l2Input.value));

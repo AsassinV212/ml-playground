@@ -4,57 +4,57 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f1115">
-  <title>Linear Regression · ml-playground</title>
+  <title data-i18n="lin.title">Linear Regression · ml-playground</title>
   <meta name="description" content="Fit a line to points with least squares or gradient descent, and see how outliers pull on it.">
-  <link rel="stylesheet" href="../assets/style.css?v=2">
+  <link rel="stylesheet" href="../assets/style.css?v=3">
 </head>
 <body>
   <div class="wrap">
     <header class="site-header">
-      <a class="back" href="../index.html">← All topics</a>
-      <h1>Linear regression</h1>
-      <p class="lead">Find the line that misses the points the least. Tap to add or remove points, then fit.</p>
+      <a class="back" href="../index.html" data-i18n>← All topics</a>
+      <h1 data-i18n>Linear regression</h1>
+      <p class="lead" data-i18n="lin.lead">Find the line that misses the points the least. Tap to add or remove points, then fit.</p>
     </header>
 
     <main>
       <section class="demo">
         <div class="panel">
           <canvas id="plot" class="plot square" aria-label="Data points and the fitted line"></canvas>
-          <p class="hint">Tap empty space to add a point, tap a point to remove it.</p>
+          <p class="hint" data-i18n="lin.hint">Tap empty space to add a point, tap a point to remove it.</p>
         </div>
 
         <div class="panel">
           <div class="field">
-            <label for="loss">Loss</label>
+            <label for="loss" data-i18n>Loss</label>
             <select id="loss">
-              <option value="mse">MSE: mean squared error</option>
-              <option value="mae">MAE: mean absolute error</option>
+              <option value="mse" data-i18n>MSE: mean squared error</option>
+              <option value="mae" data-i18n>MAE: mean absolute error</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="lr">Learning rate <output id="lr-out" for="lr"></output></label>
+            <label for="lr"><span data-i18n>Learning rate</span> <output id="lr-out" for="lr"></output></label>
             <input id="lr" type="range" min="-3" max="0.2" step="0.01">
           </div>
 
           <div class="buttons">
             <button id="run" type="button" class="primary">Run</button>
-            <button id="exact" type="button">Exact</button>
-            <button id="reset" type="button">Reset line</button>
+            <button id="exact" type="button" data-i18n>Exact</button>
+            <button id="reset" type="button" data-i18n>Reset line</button>
           </div>
           <div class="buttons">
-            <button id="random" type="button">New data</button>
-            <button id="outlier" type="button">Outlier</button>
-            <button id="clear" type="button">Clear</button>
+            <button id="random" type="button" data-i18n>New data</button>
+            <button id="outlier" type="button" data-i18n>Outlier</button>
+            <button id="clear" type="button" data-i18n>Clear</button>
           </div>
 
-          <label class="check"><input id="show-errors" type="checkbox" checked> Show errors</label>
+          <label class="check"><input id="show-errors" type="checkbox" checked> <span data-i18n>Show errors</span></label>
 
           <div class="stats">
-            <div class="stat"><div class="k">slope</div><div class="v" id="stat-slope">–</div></div>
-            <div class="stat"><div class="k">intercept</div><div class="v" id="stat-intercept">–</div></div>
+            <div class="stat"><div class="k" data-i18n>slope</div><div class="v" id="stat-slope">–</div></div>
+            <div class="stat"><div class="k" data-i18n>intercept</div><div class="v" id="stat-intercept">–</div></div>
             <div class="stat"><div class="k" id="stat-loss-k">loss</div><div class="v" id="stat-loss">–</div></div>
-            <div class="stat"><div class="k">step</div><div class="v" id="stat-step">0</div></div>
+            <div class="stat"><div class="k" data-i18n>step</div><div class="v" id="stat-step">0</div></div>
           </div>
 
           <p id="status" class="status" role="status"></p>
@@ -62,7 +62,7 @@
         </div>
       </section>
 
-      <article class="prose">
+      <article class="prose" data-i18n="lin.article">
         <h2>The model</h2>
         <p>
           Linear regression predicts a number with a straight line:
@@ -135,10 +135,13 @@
       </article>
     </main>
 
-    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+    <footer class="site-footer" data-i18n>ml-playground · plain HTML, CSS and JavaScript</footer>
   </div>
 
-  <script src="../assets/common.js?v=2"></script>
-  <script src="linear-regression.js?v=2"></script>
+  <script src="../assets/i18n.js?v=3"></script>
+  <script src="../assets/ru-common.js?v=3"></script>
+  <script src="linear-regression.ru.js?v=3"></script>
+  <script src="../assets/common.js?v=3"></script>
+  <script src="linear-regression.js?v=3"></script>
 </body>
 </html>

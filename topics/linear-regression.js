@@ -3,7 +3,10 @@
 (function () {
   "use strict";
 
-  const { plot2d, drawGrid, drawPoint, drawLineChart, hitPoint, pointerPos, onWidthChange, rng, randn, fmt, cssVar } = window.ML;
+  const {
+    plot2d, drawGrid, drawPoint, drawLineChart, hitPoint, pointerPos, onWidthChange,
+    rng, randn, fmt, cssVar, statusLine, onLang, t,
+  } = window.ML;
 
   // The plot shows x, y in [0, 10]. Gradient descent runs on centred, scaled
   // coordinates u = (x - 5) / 5, v = (y - 5) / 5, where the loss is a round
@@ -23,7 +26,7 @@
   const runBtn = $("run");
   const exactBtn = $("exact");
   const showErrors = $("show-errors");
-  const statusEl = $("status");
+  const setStatus = statusLine($("status"));
 
   let points = [];
   let w = 0, b = 0;          // model in scaled coordinates: v = w * u + b
@@ -127,11 +130,6 @@
     exactBtn.disabled = lossSelect.value !== "mse";
   }
 
-  function setStatus(msg, cls) {
-    statusEl.textContent = msg || "";
-    statusEl.className = "status" + (cls ? " " + cls : "");
-  }
-
   // --- Controls ---------------------------------------------------------
 
   function restartHistory() {
@@ -151,10 +149,10 @@
         stop(); setStatus("Diverged: the learning rate is too large.", "bad"); break;
       }
       if (lossSelect.value === "mse" && Math.abs(before - after) < 1e-10 * Math.max(1, after)) {
-        stop(); setStatus("Converged after " + steps + " steps.", "good"); break;
+        stop(); setStatus("Converged after {n} steps.", "good", { n: steps }); break;
       }
       if (steps >= MAX_STEPS) {
-        stop(); setStatus("Stopped after " + MAX_STEPS + " steps.", ""); break;
+        stop(); setStatus("Stopped after {n} steps.", "", { n: MAX_STEPS }); break;
       }
     }
     render();
@@ -163,14 +161,14 @@
   function run() {
     if (timer) { stop(); return; }
     setStatus("");
-    runBtn.textContent = "Pause";
+    runBtn.textContent = t("Pause");
     timer = setInterval(tick, 30);
   }
 
   function stop() {
     clearInterval(timer);
     timer = null;
-    runBtn.textContent = "Run";
+    runBtn.textContent = t("Run");
   }
 
   function resetLine() {
@@ -231,6 +229,11 @@
 
   function resize() { view = plot2d(canvas, BOX); render(); }
   onWidthChange(canvas, resize);
+
+  onLang(() => {
+    runBtn.textContent = t(timer ? "Pause" : "Run");
+    render();
+  });
 
   setLr(lr);
   view = plot2d(canvas, BOX);

@@ -127,7 +127,7 @@ a.card:hover, a.card:focus-visible { border-color: var(--accent); }
 .demo {
   display: grid;
   gap: 16px;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 @media (min-width: 800px) {
   .demo { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; }
@@ -174,8 +174,10 @@ select, button {
 }
 select { width: 100%; padding: 0 12px; }
 
-.buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-button { padding: 0 12px; cursor: pointer; }
+.buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+/* Long (e.g. Russian) labels wrap to two lines instead of widening the layout. */
+button { padding: 0 6px; cursor: pointer; min-width: 0; overflow: hidden; line-height: 1.15; }
+.buttons button { font-size: 15px; }
 button:active { transform: translateY(1px); }
 button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
 
@@ -188,14 +190,14 @@ input[type="range"] {
 }
 
 .buttons + .buttons { margin-top: 8px; }
-.buttons.two { grid-template-columns: repeat(2, 1fr); }
-.buttons.four { grid-template-columns: repeat(4, 1fr); }
+.buttons.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.buttons.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .buttons.four button { padding: 0 4px; }
 button:disabled { opacity: 0.4; cursor: default; }
 
 /* Segmented control: one pressed button out of several */
 .segmented { display: flex; gap: 6px; }
-.segmented button { flex: 1; padding: 0 6px; }
+.segmented button { flex: 1 1 0; padding: 0 4px; font-size: 14px; white-space: nowrap; }
 .segmented button[aria-pressed="true"] { border-color: var(--text); background: var(--border); }
 .swatch {
   display: inline-block; width: 10px; height: 10px; border-radius: 50%;

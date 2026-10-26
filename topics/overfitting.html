@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f1115">
-  <title>Overfitting · ml-playground</title>
+  <title data-i18n="of.title">Overfitting · ml-playground</title>
   <meta name="description" content="Fit polynomials of growing degree to noisy data and watch training and test error part ways.">
-  <link rel="stylesheet" href="../assets/style.css?v=2">
+  <link rel="stylesheet" href="../assets/style.css?v=3">
 </head>
 <body>
   <div class="wrap">
     <header class="site-header">
-      <a class="back" href="../index.html">← All topics</a>
-      <h1>Overfitting</h1>
-      <p class="lead">A model that is too flexible learns the noise instead of the pattern. It looks perfect on training data and fails on new data.</p>
+      <a class="back" href="../index.html" data-i18n>← All topics</a>
+      <h1 data-i18n>Overfitting</h1>
+      <p class="lead" data-i18n="of.lead">A model that is too flexible learns the noise instead of the pattern. It looks perfect on training data and fails on new data.</p>
     </header>
 
     <main>
@@ -21,52 +21,52 @@
         <div class="panel">
           <canvas id="plot" class="plot square" aria-label="Noisy training points, the true curve and the fitted polynomial"></canvas>
           <div class="legend">
-            <span><i style="background:#5fd4b0"></i>fitted polynomial</span>
-            <span><i style="background:rgba(255,255,255,0.55)"></i>true curve</span>
-            <span><i style="background:#ff7a59"></i>average of 20 fits</span>
+            <span><i style="background:#5fd4b0"></i><span data-i18n>fitted polynomial</span></span>
+            <span><i style="background:rgba(255,255,255,0.55)"></i><span data-i18n>true curve</span></span>
+            <span><i style="background:#ff7a59"></i><span data-i18n>average of 20 fits</span></span>
           </div>
         </div>
 
         <div class="panel">
           <div class="field">
-            <label for="degree">Polynomial degree <output id="degree-out" for="degree"></output></label>
+            <label for="degree"><span data-i18n>Polynomial degree</span> <output id="degree-out" for="degree"></output></label>
             <input id="degree" type="range" min="0" max="15" step="1" value="3">
           </div>
 
           <div class="field">
-            <label for="n-train">Training points <output id="n-out" for="n-train"></output></label>
+            <label for="n-train"><span data-i18n>Training points</span> <output id="n-out" for="n-train"></output></label>
             <input id="n-train" type="range" min="6" max="60" step="1" value="15">
           </div>
 
           <div class="field">
-            <label for="l2">L2 regularization <output id="l2-out" for="l2"></output></label>
+            <label for="l2"><span data-i18n>L2 regularization</span> <output id="l2-out" for="l2"></output></label>
             <input id="l2" type="range" min="-7" max="0" step="0.5" value="-7">
           </div>
 
           <div class="buttons two">
-            <button id="resample" type="button" class="primary">New sample</button>
+            <button id="resample" type="button" class="primary" data-i18n>New sample</button>
           </div>
-          <label class="check"><input id="show-test" type="checkbox"> Show test points</label>
-          <label class="check"><input id="show-cloud" type="checkbox"> Show 20 fits on other samples</label>
+          <label class="check"><input id="show-test" type="checkbox"> <span data-i18n>Show test points</span></label>
+          <label class="check"><input id="show-cloud" type="checkbox"> <span data-i18n>Show 20 fits on other samples</span></label>
 
           <div class="stats">
-            <div class="stat"><div class="k">train MSE</div><div class="v" id="stat-train">–</div></div>
-            <div class="stat"><div class="k">test MSE</div><div class="v" id="stat-test">–</div></div>
-            <div class="stat"><div class="k">coefficients / points</div><div class="v" id="stat-params">–</div></div>
+            <div class="stat"><div class="k" data-i18n>train MSE</div><div class="v" id="stat-train">–</div></div>
+            <div class="stat"><div class="k" data-i18n>test MSE</div><div class="v" id="stat-test">–</div></div>
+            <div class="stat"><div class="k" data-i18n>coefficients / points</div><div class="v" id="stat-params">–</div></div>
             <div class="stat"><div class="k">|w|</div><div class="v" id="stat-w">–</div></div>
           </div>
 
           <canvas id="error-chart" class="plot" style="height:180px" aria-label="Train and test error for every degree"></canvas>
           <div class="legend">
-            <span><i style="background:#5fd4b0"></i>train MSE</span>
-            <span><i style="background:#ff7a59"></i>test MSE</span>
-            <span><i style="background:rgba(255,255,255,0.3)"></i>noise level</span>
-            <span>x: degree, y: log scale</span>
+            <span><i style="background:#5fd4b0"></i><span data-i18n>train MSE</span></span>
+            <span><i style="background:#ff7a59"></i><span data-i18n>test MSE</span></span>
+            <span><i style="background:rgba(255,255,255,0.3)"></i><span data-i18n>noise level</span></span>
+            <span data-i18n>x: degree, y: log scale</span>
           </div>
         </div>
       </section>
 
-      <article class="prose">
+      <article class="prose" data-i18n="of.article">
         <h2>The setup</h2>
         <p>
           The hidden truth is the curve <code>y = sin(2πx)</code>. We only see a few measurements of it, each with
@@ -144,10 +144,13 @@
       </article>
     </main>
 
-    <footer class="site-footer">ml-playground · plain HTML, CSS and JavaScript</footer>
+    <footer class="site-footer" data-i18n>ml-playground · plain HTML, CSS and JavaScript</footer>
   </div>
 
-  <script src="../assets/common.js?v=2"></script>
-  <script src="overfitting.js?v=2"></script>
+  <script src="../assets/i18n.js?v=3"></script>
+  <script src="../assets/ru-common.js?v=3"></script>
+  <script src="overfitting.ru.js?v=3"></script>
+  <script src="../assets/common.js?v=3"></script>
+  <script src="overfitting.js?v=3"></script>
 </body>
 </html>

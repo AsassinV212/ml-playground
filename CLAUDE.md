@@ -9,6 +9,8 @@ Interactive static website that visualizes ML algorithms. Audience: a student le
 
 ## Language rules
 - Everything in the repository is in English: code, comments, commit messages, UI text, README.md.
+- Exception: the site has a RU/EN toggle. UI text is authored in English in the HTML; Russian translations
+  live only in dictionary files (assets/ru-common.js, topics/*.ru.js). See docs/adding-a-topic.md.
 - README.ru.md is a short Russian version of the README.
 - In chat with me, always reply in Russian.
 
